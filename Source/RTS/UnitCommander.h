@@ -29,6 +29,8 @@ protected:
 		float MovementSpeed = 1.0f;
 	UPROPERTY(EditAnywhere, Category = "Camera Controls", meta = (ClampMin = 0.0f, ClampMax = 1.0f, UIMin = 0.0f, UIMax = 1.0f))
 	float CurrentZoomLevel = 0.25f;
+	UPROPERTY(EditAnywhere, Category = "Camera Controls")
+	UCurveFloat* cameraPitchAngle;
 	float ZoomTarget = 0.25f;
 	enum class ZoomState
 	{

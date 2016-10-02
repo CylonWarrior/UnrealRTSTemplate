@@ -2,6 +2,7 @@
 
 #include "RTS.h"
 #include "RTSPlayerController.h"
+#include "Selectable.h"
 #include "RTSHUD.h"
 
 
@@ -77,6 +78,11 @@ void ARTSPlayerController::OnLeftClickReleased()
 	isLeftClickDown = false;
 	RTSHUD->StopDrawSelectionBox();
 	//Collect Selected Units
+	FVector2D currentMousePosition;
+	GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
+	TArray<AActor*> selectableActors;
+	
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld())
 }
 
 
