@@ -8,8 +8,9 @@
 AUnit::AUnit()
 	: UnitController(nullptr)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -25,18 +26,28 @@ void AUnit::BeginPlay()
 	{
 		UE_LOG(RTSLog, Log, TEXT("Controller is null"));
 	}
+	UnitController = Cast<AUnitAIController>(Controller);
 	if (Controller == UnitController)
 	{
 		UE_LOG(RTSLog, Log, TEXT("Controller is AI Controller"));
 	}
-	
-	selectionRing = FindComponentByClass<UDecalComponent>();
+	SelectionRing = FindComponentByClass<UDecalComponent>();/*
+	auto decals = GetComponentsByClass(TSubclassOf<UDecalComponent>{});
+	for (auto& decal : decals)
+	{
+		if (decal->ComponentHasTag(FName("SelectionRing")))
+		{
+			SelectionRing = Cast<UDecalComponent>(decal);
+			break;
+		}
+	}*/
+
 }
 
 // Called every frame
-void AUnit::Tick( float DeltaTime )
+void AUnit::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
 }
 
@@ -51,26 +62,25 @@ void AUnit::Tick( float DeltaTime )
 
 void AUnit::Select_Implementation()
 {
-
+	SelectionRing->SetHiddenInGame(false);
 }
 
 void AUnit::Deselect_Implementation()
 {
+	SelectionRing->SetHiddenInGame(true);
 }
 
 void AUnit::AddHighlight_Implementation()
 {
-	selectionRing->SetHiddenInGame(false);
 }
 
 void AUnit::RemoveHighlight_Implementation()
 {
-	selectionRing->SetHiddenInGame(true);
 }
 
 void AUnit::MoveTo_Implementation(const FVector& location, bool isShiftPressed)
 {
-
+	UnitController->MoveToLocation(location);
 }
 
 void AUnit::Follow_Implementation(const FVector& location, bool isShiftPressed)

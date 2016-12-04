@@ -15,4 +15,5 @@ class RTS_API AUnitAIController : public AAIController
 	
 public:
 	virtual void BeginPlay() override;
+
 };

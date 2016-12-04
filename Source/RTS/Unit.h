@@ -17,7 +17,10 @@ class RTS_API AUnit : public ACharacter, public ISelectable, public IMoveCommand
 protected:
 	UPROPERTY(EditAnywhere, Category = "Unit Stats")
 		float Health;
-	UDecalComponent* selectionRing;
+
+	UPROPERTY(EditAnywhere, Category = "Unit Selection")
+		UDecalComponent* SelectionRing;
+
 	class AUnitAIController* UnitController;
 public:
 	// Sets default values for this character's properties

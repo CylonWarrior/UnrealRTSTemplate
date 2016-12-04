@@ -7,6 +7,5 @@
 void AUnitAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	MoveToLocation(FVector{ 500, 0, 0 });
 	UE_LOG(RTSLog, Log, TEXT("AIController BeginPlay"));
 }

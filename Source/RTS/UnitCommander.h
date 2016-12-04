@@ -15,7 +15,7 @@ protected:
 		USpringArmComponent* CameraSpringArm;
 	UPROPERTY(EditAnywhere, Category = "Camera Controls", meta = (ClampMin = 100.0f, ClampMax = 800.0f, UIMin = 100.0f, UIMax = 800.0f))
 		float MinZoomDistance = 500.0f;
-	UPROPERTY(EditAnywhere, Category = "Camera Controls", meta = (ClampMin = 450.0f, ClampMax = 1600.0f, UIMin = 450.0f, UIMax = 1600.0f))
+	UPROPERTY(EditAnywhere, Category = "Camera Controls", meta = (ClampMin = 450.0f, ClampMax = 2000.0f, UIMin = 450.0f, UIMax = 2000.0f))
 		float MaxZoomDistance = 500.0f;
 	UPROPERTY(EditAnywhere, Category = "Camera Controls", meta = (ClampMin = 30.0f, ClampMax = 70.0f, UIMin = 30.0f, UIMax = 70.0f))
 		float MinFieldOfView = 60.0f;

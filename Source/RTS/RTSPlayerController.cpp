@@ -3,6 +3,7 @@
 #include "RTS.h"
 #include "RTSPlayerController.h"
 #include "Selectable.h"
+#include "MoveCommandable.h"
 #include "RTSHUD.h"
 
 
@@ -72,11 +73,7 @@ void ARTSPlayerController::OnLeftClickHeld()
 	//Clear out current Selection
 	for (auto& actor : currentSelection)
 	{
-		auto selectable = Cast<ISelectable>(actor);
-		if (selectable)
-		{
-			ISelectable::Execute_RemoveHighlight(pointerToAnyUObject);
-		}
+		ISelectable::Execute_Deselect(Cast<UObject>(actor));
 	}
 	currentSelection.Empty();
 
@@ -86,36 +83,77 @@ void ARTSPlayerController::OnLeftClickHeld()
 	FVector2D currentMousePosition;
 	GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
 
-	float lowerX = initialMousePosition.X < currentMousePosition.X ? initialMousePosition.X : currentMousePosition.X;
+	/*float lowerX = initialMousePosition.X < currentMousePosition.X ? initialMousePosition.X : currentMousePosition.X;
 	float upperX = initialMousePosition.X > currentMousePosition.X ? initialMousePosition.X : currentMousePosition.X;
 
 	float lowerY = initialMousePosition.Y < currentMousePosition.Y ? initialMousePosition.Y : currentMousePosition.Y;
-	float upperY = initialMousePosition.Y > currentMousePosition.Y ? initialMousePosition.Y : currentMousePosition.Y;
+	float upperY = initialMousePosition.Y > currentMousePosition.Y ? initialMousePosition.Y : currentMousePosition.Y;*/
+
+	FBox2D box;
+	box += initialMousePosition;
+	box += currentMousePosition;
+
 
 	TArray<AActor*> selectableActors;
-	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), TSubclassOf<USelectable>{}, selectableActors);
-	
-	
-	for (auto& actor : selectableActors)
+
+	FVector2D screenPos;
+	for (TActorIterator<AActor> Itr(GetWorld()); Itr; ++Itr)
+	{
+		if (!Itr->GetClass()->ImplementsInterface(USelectable::StaticClass()))
+		{
+			continue;
+		}
+		FVector worldPos = Itr->GetActorLocation();
+		if (!ProjectWorldLocationToScreen(worldPos, screenPos))
+		{
+			continue;
+		}
+		if (box.IsInside(screenPos))
+		{
+			ISelectable::Execute_Select(Cast<UObject>(*Itr));
+			currentSelection.Add(*Itr);
+		}
+	}
+
+
+	/*for (auto& actor : selectableActors)
 	{
 		ISelectable* selectable = Cast<ISelectable>(actor);
-		FVector worldPos = actor->GetActorLocation();
 		if (selectable)
 		{
-			FVector2D screenPos;
+			FVector worldPos = actor->GetActorLocation();
 			if (!ProjectWorldLocationToScreen(worldPos, screenPos))
 			{
 				continue;
 			}
-			if (screenPos.X > lowerX && screenPos.X < upperX &&
-				screenPos.Y > lowerY && screenPos.Y < upperY)
+			if (box.IsInside(screenPos))
 			{
-				ISelectable::Execute_AddHighlight(pointerToAnyUObject);
-				currentSelection.Add(actor);
+
 			}
 		}
-	}
-	
+	}*/
+
+
+	//for (auto& actor : selectableActors)
+	//{
+	//	ISelectable* selectable = Cast<ISelectable>(actor);
+	//	FVector worldPos = actor->GetActorLocation();
+	//	if (selectable)
+	//	{
+	//		FVector2D screenPos;
+	//		if (!ProjectWorldLocationToScreen(worldPos, screenPos))
+	//		{
+	//			continue;
+	//		}
+	//		if (screenPos.X > lowerX && screenPos.X < upperX &&
+	//			screenPos.Y > lowerY && screenPos.Y < upperY)
+	//		{
+	//			ISelectable::Execute_AddHighlight(pointerToAnyUObject);
+	//			currentSelection.Add(actor);
+	//		}
+	//	}
+	//}
+
 
 }
 
@@ -139,6 +177,7 @@ void ARTSPlayerController::OnLeftClickReleased()
 
 void ARTSPlayerController::OnRightClickPressed()
 {
+
 	isRightClickDown = true;
 }
 
@@ -150,4 +189,22 @@ void ARTSPlayerController::OnRightClickHeld()
 void ARTSPlayerController::OnRightClickReleased()
 {
 	isRightClickDown = true;
+	FVector2D currentMousePosition;
+	GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
+
+	FVector position;
+	FVector direction;
+	DeprojectScreenPositionToWorld(currentMousePosition.X, currentMousePosition.Y, position, direction);
+
+	float distance = 4000.f;
+	FHitResult result;
+	GetWorld()->LineTraceSingleByObjectType(result, position, position + direction * distance, ECC_WorldStatic);
+
+	for (auto& selectable : currentSelection)
+	{
+		if (selectable->GetClass()->ImplementsInterface(UMoveCommandable::StaticClass()))
+		{
+			IMoveCommandable::Execute_MoveTo(Cast<UObject>(selectable), result.Location, false);
+		}
+	}
 }

@@ -61,8 +61,8 @@ void AUnitCommander::Tick( float DeltaTime )
 	//Adjust Rotation based off zoom level
 	FRotator NewSpringArmRotation = CameraSpringArm->GetComponentRotation();
 	//NewSpringArmRotation.Pitch = FMath::Lerp<float>(-70.0f, -15.0f, CurrentZoomLevel);
-	NewSpringArmRotation.Pitch = cameraPitchAngle->GetFloatValue(CurrentZoomLevel);
-	
+	NewSpringArmRotation.Pitch = cameraPitchAngle->GetFloatValue(CurrentZoomLevel);	
+
 	CameraSpringArm->SetWorldRotation(NewSpringArmRotation);
 
 	float MovementMultiplier = CameraSpringArm->TargetArmLength / MinZoomDistance;
