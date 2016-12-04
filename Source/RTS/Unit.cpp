@@ -29,6 +29,8 @@ void AUnit::BeginPlay()
 	{
 		UE_LOG(RTSLog, Log, TEXT("Controller is AI Controller"));
 	}
+	
+	selectionRing = FindComponentByClass<UDecalComponent>();
 }
 
 // Called every frame
@@ -58,12 +60,12 @@ void AUnit::Deselect_Implementation()
 
 void AUnit::AddHighlight_Implementation()
 {
-
+	selectionRing->SetHiddenInGame(false);
 }
 
 void AUnit::RemoveHighlight_Implementation()
 {
-
+	selectionRing->SetHiddenInGame(true);
 }
 
 void AUnit::MoveTo_Implementation(const FVector& location, bool isShiftPressed)

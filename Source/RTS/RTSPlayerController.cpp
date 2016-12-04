@@ -67,10 +67,56 @@ void ARTSPlayerController::OnLeftClickPressed()
 
 void ARTSPlayerController::OnLeftClickHeld()
 {
+	UObject* pointerToAnyUObject = nullptr;
+
+	//Clear out current Selection
+	for (auto& actor : currentSelection)
+	{
+		auto selectable = Cast<ISelectable>(actor);
+		if (selectable)
+		{
+			ISelectable::Execute_RemoveHighlight(pointerToAnyUObject);
+		}
+	}
+	currentSelection.Empty();
 
 	//GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
 	UE_LOG(RTSLog, Log, TEXT("On Left Click Held Running"));
 	//MyHUD->DrawRect(FLinearColor::Blue, initialMousePosition.X, initialMousePosition.Y, currentMousePosition.X - initialMousePosition.X, currentMousePosition.Y - initialMousePosition.Y);
+	FVector2D currentMousePosition;
+	GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
+
+	float lowerX = initialMousePosition.X < currentMousePosition.X ? initialMousePosition.X : currentMousePosition.X;
+	float upperX = initialMousePosition.X > currentMousePosition.X ? initialMousePosition.X : currentMousePosition.X;
+
+	float lowerY = initialMousePosition.Y < currentMousePosition.Y ? initialMousePosition.Y : currentMousePosition.Y;
+	float upperY = initialMousePosition.Y > currentMousePosition.Y ? initialMousePosition.Y : currentMousePosition.Y;
+
+	TArray<AActor*> selectableActors;
+	UGameplayStatics::GetAllActorsWithInterface(GetWorld(), TSubclassOf<USelectable>{}, selectableActors);
+	
+	
+	for (auto& actor : selectableActors)
+	{
+		ISelectable* selectable = Cast<ISelectable>(actor);
+		FVector worldPos = actor->GetActorLocation();
+		if (selectable)
+		{
+			FVector2D screenPos;
+			if (!ProjectWorldLocationToScreen(worldPos, screenPos))
+			{
+				continue;
+			}
+			if (screenPos.X > lowerX && screenPos.X < upperX &&
+				screenPos.Y > lowerY && screenPos.Y < upperY)
+			{
+				ISelectable::Execute_AddHighlight(pointerToAnyUObject);
+				currentSelection.Add(actor);
+			}
+		}
+	}
+	
+
 }
 
 void ARTSPlayerController::OnLeftClickReleased()
@@ -81,8 +127,11 @@ void ARTSPlayerController::OnLeftClickReleased()
 	FVector2D currentMousePosition;
 	GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
 	TArray<AActor*> selectableActors;
-	
-	UGameplayStatics::GetAllActorsWithInterface(GetWorld())
+	//TSubclassOf<USelectable> selectable;
+
+	//UGameplayStatics::GetAllActorsWithInterface(GetWorld(), selectable, selectableActors);
+
+
 }
 
 

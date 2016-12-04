@@ -18,6 +18,7 @@ protected:
 	FVector2D initialMousePosition;
 	//FVector2D currentMousePosition;
 	class ARTSHUD* RTSHUD;
+	TArray<AActor*> currentSelection;
 public:
 	ARTSPlayerController(const FObjectInitializer& ObjectInitializer);
 
