@@ -115,7 +115,6 @@ void ARTSPlayerController::OnLeftClickHeld()
 		}
 	}
 
-
 	/*for (auto& actor : selectableActors)
 	{
 		ISelectable* selectable = Cast<ISelectable>(actor);
@@ -162,9 +161,9 @@ void ARTSPlayerController::OnLeftClickReleased()
 	isLeftClickDown = false;
 	RTSHUD->StopDrawSelectionBox();
 	//Collect Selected Units
-	FVector2D currentMousePosition;
-	GetMousePosition(currentMousePosition.X, currentMousePosition.Y);
-	TArray<AActor*> selectableActors;
+	
+	
+
 	//TSubclassOf<USelectable> selectable;
 
 	//UGameplayStatics::GetAllActorsWithInterface(GetWorld(), selectable, selectableActors);
